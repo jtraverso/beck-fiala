@@ -1,0 +1,114 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "The Beck–Fiala integer-making theorem"
+  description: >-
+    A Lean 4 / Mathlib formalization of the Beck–Fiala integer-making theorem in its rational
+    unit-cube form: if A is a 0/1 matrix in which every column has at most t ≥ 1 ones and
+    x ∈ [0,1]^N has rational coordinates, then x can be rounded to y ∈ {0,1}^N with
+    |∑ᵢ A j i (y i − x i)| < t for every row j; moreover the rounding can keep every coordinate of
+    x that is already 0 or 1. The proof is the floating-coordinates argument: while some
+    coordinates are strictly between 0 and 1, the rows with more than t floating coordinates are
+    fewer than the floating coordinates, so a nonzero direction keeps their sums fixed, and moving
+    along it makes a coordinate integral; induction on the number of floating coordinates.
+  authors:
+    - "Juan Pablo Traverso Gianini"
+  license: "Apache-2.0"
+  responsible_maintainers:
+    - "Juan Pablo Traverso Gianini"
+
+classification:
+  arxiv: ["math.CO"]
+  msc2020: ["05D40", "11K38"]
+
+sources:
+  - title: "“Integer-making” theorems"
+    authors:
+      - "József Beck"
+      - "Tibor Fiala"
+    id: "doi:10.1016/0166-218X(81)90022-6"
+    type: "paper"
+    location: "Discrete Applied Mathematics 3 (1981), no. 1, 1–8"
+    relationship: "formalizes"
+    note: >-
+      The integer-making theorem for set systems in which every element lies in at most t sets,
+      with strict error < t, in the form for rational points of the unit cube and 0/1 incidence
+      matrices. The discrepancy corollary (discrepancy < 2t) is not stated separately.
+    license: "unknown"
+    author_endorsement: "n/a"
+
+related_formalizations:
+  - id: "LeanPool/lean-pool, project BeckFialaMatrix (PR #581)"
+    relationship: "builds-on"
+    note: >-
+      The same author's contribution to Lean Pool; the module LeanPool/BeckFialaMatrix/Basic.lean
+      is copied from LeanPool/lean-pool at commit 26ce45d3871e5560a8baffa4d49a8942b1d20a24 (without
+      the generated aggregate `Imports.lean`). Challenge.lean and Solution.lean were added for this
+      submission. Lean Pool also contains a discrepancy bound derived from Komlós
+      (LeanPool.Komlos.BeckFiala), with a different statement.
+
+status:
+  scope: >-
+    Proved for every finite 0/1 matrix indexed by Fin m × Fin N, every bound t ≥ 1 on the column
+    sums and every rational point of [0,1]^N. The hypothesis t ≥ 1 is necessary for the strict
+    inequality. Real (non-rational) inputs are not covered.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: []
+
+automation:
+  methods:
+    - method: "agent"
+      models: ["Claude Opus 5.5"]
+      framework: "Claude Code (Anthropic)"
+      tool_setup: >-
+        AI-assisted development under the author's direction (proof provenance recorded as AI in
+        Lean Pool) and the Palomar packaging, checked with `lake build` and `#print axioms` (Lean
+        v4.35.0-rc3, Mathlib c55e6e786f49471c72fbddbec5415808896aec1e).
+      cost:
+        wall_time: "not tracked"
+        spend_usd: "subscription-based"
+        hardware: "local machine"
+      prompting_notes: "Natural-language instructions in Spanish, directed by the author."
+  spend_usd: "subscription-based"
+  notes: >-
+    The result and route were chosen by the human author; the Lean proofs are AI-generated and
+    mechanically verified (no `sorry`, axioms limited to propext, Classical.choice and
+    Quot.sound, identical elaborated types for each Challenge/Solution pair).
+
+fidelity:
+  divergences: >-
+    The input point has rational coordinates (`Fin N → ℚ`) and the matrix has integer entries
+    restricted to 0 and 1; the original theorem is stated for real points. The bound is strict
+    (< t) and requires t ≥ 1.
+
+review:
+  status: "agent-reviewed"
+  reviewers:
+    - "Claude Opus 5.5 (AI agent in Claude Code, acting for the author)"
+  notes: >-
+    Agent review by Claude Opus 5.5, distinct from the mechanical verification: the agent compared
+    the Challenge statements with the Beck–Fiala theorem, checked that the vendored module is the
+    merged Lean Pool source, and confirmed by `lake build`, `#print axioms` and a comparison of the
+    fully elaborated Challenge and Solution types that the proofs use no `sorry` and only
+    propext, Classical.choice and Quot.sound. The author directed the work and approved the
+    statements. No independent human mathematical review has been performed. The result is
+    classical and no mathematical novelty is claimed.
+
+alignment:
+  namespace: "BeckFiala"
+  statements:
+    - source: "Beck–Fiala (1981), integer-making theorem"
+      lean: "BeckFiala.exists_rounding"
+      module: "Challenge"
+      status: "proved"
+      note: "Rounding of a rational point of [0,1]^N with row errors < t for a 0/1 matrix with column sums ≤ t."
+    - source: "Beck–Fiala (1981), integer-making theorem (fixing integral coordinates)"
+      lean: "BeckFiala.exists_rounding_preserving_integral"
+      module: "Challenge"
+      status: "proved"
+      note: "The same, keeping every coordinate of x that is already 0 or 1."
+
+acknowledgements: >-
+  Mathlib and the Lean community; Lean Pool.
